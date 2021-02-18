@@ -1,0 +1,17 @@
+{
+    "name": "Luka",
+    
+    "require" : 
+    {
+        "php" : ">=7.4",
+        "dcblogdev/pdo-wrapper":"*"
+    },
+    
+    "autoload" : 
+    {
+        "psr-4": 
+        {
+            "luka\\": "src/"
+        }
+    }
+}
