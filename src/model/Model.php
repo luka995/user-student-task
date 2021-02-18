@@ -22,13 +22,18 @@ abstract class Model
         return self::$db;        
     }
 
+    public function getByCol($table, $col, $val)
+    {
+        $sql = "SELECT * FROM $table WHERE $col=?";
+        $stm = $this->getDb()->prepare($sql);
+        $stm->bindValue(1, $val);
+        $stm->execute();
+        return $stm->fetch();                  
+    }
+    
     public function getById($table, $id) 
     {
-        $sql = "SELECT * FROM $table WHERE id=?";
-        $stm = $this->getDb()->prepare($sql);
-        $stm->bindValue(1, $id);
-        $stm->execute();
-        return $stm->fetch();          
+        return $this->getByCol($table, 'id', $id);
     }
     
     protected abstract function validate($data);
