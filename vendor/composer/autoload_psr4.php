@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'luka\\' => array($baseDir . '/src'),
+    'Spatie\\ArrayToXml\\' => array($vendorDir . '/spatie/array-to-xml/src'),
 );

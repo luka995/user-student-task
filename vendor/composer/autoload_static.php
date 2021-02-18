@@ -11,12 +11,20 @@ class ComposerStaticInitd6c0aec6bf3d295a947faafff5e7c6cd
         array (
             'luka\\' => 5,
         ),
+        'S' => 
+        array (
+            'Spatie\\ArrayToXml\\' => 18,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'luka\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Spatie\\ArrayToXml\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spatie/array-to-xml/src',
         ),
     );
 

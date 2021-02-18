@@ -1,6 +1,7 @@
 <?php
 namespace luka\model;
 
+use DOMDocument;
 abstract class Model
 {
     private static $db = null;
@@ -16,7 +17,7 @@ abstract class Model
             
             self::$db = new \PDO($dsn, $db['username'], $db['password'], [ 
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ                   
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
             ]);
         }
         return self::$db;        
@@ -42,5 +43,6 @@ abstract class Model
     {
         return $this->errors;
     }    
+    
     
 }
