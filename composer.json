@@ -3,8 +3,7 @@
     
     "require" : 
     {
-        "php" : ">=7.4",
-        "dcblogdev/pdo-wrapper":"*"
+        "php" : ">=7.2" 
     },
     
     "autoload" : 
