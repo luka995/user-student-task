@@ -37,14 +37,9 @@ class Student extends Model
         return $this->board;        
     }
     
-    public function getGradeAvg()
+    public function getGradeAvg($array)
     {
-        $id = $this->student->id;
-        $sql = "select avg(grade_value) as avg_grade from grade where student_id=?";
-        $stm = $this->getDb()->prepare($sql);
-        $stm->bindValue(1, $id);
-        $stm->execute();
-        return $stm->fetchColumn();        
+       return number_format(array_sum($array) / count($array), 2) ;       
     }            
     
     public function getGradeCount($data)
@@ -75,7 +70,7 @@ class Student extends Model
     private function checkGradeCount($gradeCount, &$data)
     {
         if ($gradeCount > 4 || $gradeCount < 1) {
-            $data['invalidGradeCount'] = $gradeCount;
+            $data['student']['invalidGradeCount'] = $gradeCount;
         }         
     }
     
@@ -89,9 +84,9 @@ class Student extends Model
             'student' => $studentData,           
         ];
         if ($gradeCount) {
-            $gradeAvg = $this->getGradeAvg();
-            $data['grade_avg'] = $gradeAvg;
-            $data['final_result'] = $gradeAvg >= self::CSM_THRESHOLD ? 'Pass' : 'Fail';
+            $gradeAvg = $this->getGradeAvg($studentData['grades']);
+            $data['student']['grade_avg'] = $gradeAvg;
+            $data['student']['final_result'] = $gradeAvg >= self::CSM_THRESHOLD ? 'Pass' : 'Fail';
         }
         $this->checkGradeCount($gradeCount, $data);
         header("Content-type: text/json");
@@ -113,8 +108,11 @@ class Student extends Model
             if ($gradeCount > 2) {
                 array_shift($grades);                
             }
+            $gradeAvg = $this->getGradeAvg($grades);
             $bigestGrade = $grades[count($grades) - 1];
-            $data['pass'] = $bigestGrade > self::CSMB_TRESHOLD ? 'Pass' : 'Fail';
+            $data['student']['grades'] = ['grade' => $grades];
+            $data['student']['final_result'] = $bigestGrade > self::CSMB_TRESHOLD ? 'Pass' : 'Fail';
+            $data['student']['grade_avg'] = $gradeAvg;            
         }
         $this->checkGradeCount($gradeCount, $data);
         
