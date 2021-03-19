@@ -10,14 +10,62 @@ class Student extends Model
     private $student = null;
     private $board = null;
     
-    public function __construct($id)
+    protected $attrs = ['student_name', 'board_id'];
+    
+    public function __construct($id = null)
     {
-        $this->student = $this->getById('student', $id);
+        if ($id) {
+            $this->student = $this->getById('student', $id);
+            if (!$this->student) {
+                throw new \Exception('Unknown student');
+            }
+        }
     }     
     
-    protected function validate($data) 
+    public function save()
     {
-        
+        if (!$this->validate()) {
+            return false;
+        }
+        $cols = implode(', ', $this->attrs);     
+        $placeholders = implode(', ', array_fill(0, count($this->attrs), '?'));
+        $sql = "INSERT INTO student($cols) VALUES($placeholders)";
+        $stm = $this->getDb()->prepare($sql);
+        $arr = array_values((array)$this->student);
+        if ($stm->execute($arr)) {
+            $this->student->id = $this->getDb()->lastInsertId();
+            return true;
+        }
+        return false;        
+    }
+    
+    public function load($data) 
+    {
+        if (!$data) {
+            return false;
+        }
+        $student = new \stdClass();
+        foreach ($this->attrs as $attr) {
+            $student->$attr = $data[$attr] ?? null;
+        }
+        $this->student = $student;
+        return $this->validate();
+    }
+    
+    public function getData()
+    {
+        return $this->student;
+    }
+    
+    protected function validate() 
+    {
+        if (empty($this->student->student_name)) {
+            $this->errors['student_name'] = 'Missing student name';
+        }
+        if (empty($this->student->board_id)) {
+            $this->errors['board_id'] = 'Missing board';
+        }
+        return empty($this->errors);
     }
 
     public function reportData() 
@@ -89,7 +137,6 @@ class Student extends Model
             $data['student']['final_result'] = $gradeAvg >= self::CSM_THRESHOLD ? 'Pass' : 'Fail';
         }
         $this->checkGradeCount($gradeCount, $data);
-        header("Content-type: text/json");
         return json_encode($data, JSON_PRETTY_PRINT);        
     }
     
@@ -114,13 +161,9 @@ class Student extends Model
             $data['student']['final_result'] = $bigestGrade > self::CSMB_TRESHOLD ? 'Pass' : 'Fail';
             $data['student']['grade_avg'] = $gradeAvg;            
         }
-        $this->checkGradeCount($gradeCount, $data);
-        
-        header("Content-type: text/xml");
+        $this->checkGradeCount($gradeCount, $data);        
         $arrayToXml = new ArrayToXml($data);
-
-        return $arrayToXml->dropXmlDeclaration()->toXml();        
-        
+        return $arrayToXml->dropXmlDeclaration()->toXml();                
     }
     
 }

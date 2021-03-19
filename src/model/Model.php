@@ -1,7 +1,6 @@
 <?php
 namespace luka\model;
 
-use DOMDocument;
 abstract class Model
 {
     private static $db = null;
@@ -30,14 +29,14 @@ abstract class Model
         $stm->bindValue(1, $val);
         $stm->execute();
         return $stm->fetch();                  
-    }
+    }        
     
     public function getById($table, $id) 
     {
         return $this->getByCol($table, 'id', $id);
     }
     
-    protected abstract function validate($data);
+    protected abstract function validate();
     
     public function getErrors()
     {
